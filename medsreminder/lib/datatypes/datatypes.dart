@@ -16,4 +16,5 @@ class Reminder {
 
   DateTime? lastTaken; // saves the last time the user consumed their medicine.
 
+  int? remainingQuantity;
 }
