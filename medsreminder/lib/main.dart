@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+// main app booter
 void main() {
   runApp(MedsReminderApp());
 }
@@ -59,18 +60,30 @@ class _MedsReminderScreenState extends State<MedsReminderScreen> {
               children: [
                 // top action bar
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       CupertinoButton(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 6,
+                        ),
                         child: Text('Cancel'),
                         onPressed: () => Navigator.of(ctx).pop(),
                       ),
                       CupertinoButton(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                        child: Text('Done', style: TextStyle(color: Colors.cyan)),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 6,
+                        ),
+                        child: Text(
+                          'Done',
+                          style: TextStyle(color: Colors.cyan),
+                        ),
                         onPressed: () => Navigator.of(ctx).pop(chosen),
                       ),
                     ],
@@ -107,8 +120,9 @@ class _MedsReminderScreenState extends State<MedsReminderScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           title: Text(
             "Add Medication",
             style: TextStyle(fontWeight: FontWeight.bold),
@@ -141,7 +155,9 @@ class _MedsReminderScreenState extends State<MedsReminderScreen> {
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 10),
+                        vertical: 12,
+                        horizontal: 10,
+                      ),
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey.shade400),
                         borderRadius: BorderRadius.circular(8),
@@ -171,8 +187,7 @@ class _MedsReminderScreenState extends State<MedsReminderScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                if (nameController.text.isNotEmpty &&
-                    selectedTime != null) {
+                if (nameController.text.isNotEmpty && selectedTime != null) {
                   setState(() {
                     meds.add({
                       'title': nameController.text,
@@ -183,7 +198,8 @@ class _MedsReminderScreenState extends State<MedsReminderScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(
-                          '${nameController.text} added for ${selectedTime!.format(context)}'),
+                        '${nameController.text} added for ${selectedTime!.format(context)}',
+                      ),
                       behavior: SnackBarBehavior.floating,
                       duration: Duration(seconds: 2),
                     ),
@@ -224,13 +240,15 @@ class _MedsReminderScreenState extends State<MedsReminderScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.medication_liquid_outlined,
-                      size: 80, color: Colors.grey.shade400),
+                  Icon(
+                    Icons.medication_liquid_outlined,
+                    size: 80,
+                    color: Colors.grey.shade400,
+                  ),
                   SizedBox(height: 15),
                   Text(
                     "No medications added yet",
-                    style:
-                        TextStyle(fontSize: 18, color: Colors.grey.shade600),
+                    style: TextStyle(fontSize: 18, color: Colors.grey.shade600),
                   ),
                 ],
               ),
@@ -254,8 +272,9 @@ class _MedsReminderScreenState extends State<MedsReminderScreen> {
                         context: context,
                         builder: (_) => AlertDialog(
                           title: Text("Delete ${med['title']}?"),
-                          content:
-                              Text("Are you sure you want to remove this?"),
+                          content: Text(
+                            "Are you sure you want to remove this?",
+                          ),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(context),
@@ -266,8 +285,10 @@ class _MedsReminderScreenState extends State<MedsReminderScreen> {
                                 setState(() => meds.removeAt(index));
                                 Navigator.pop(context);
                               },
-                              child: Text("Delete",
-                                  style: TextStyle(color: Colors.red)),
+                              child: Text(
+                                "Delete",
+                                style: TextStyle(color: Colors.red),
+                              ),
                             ),
                           ],
                         ),
