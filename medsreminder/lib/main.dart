@@ -1,11 +1,21 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:medsreminder/datatypes/providertype.dart';
+import 'widgets/time_picker.dart';
+import 'widgets/add_medication.dart';
+//import './localdata/global_data.dart' as globals;
+import 'package:provider/provider.dart';
 
 // main app booter
 void main() {
-  runApp(MedsReminderApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => MedsListProvider(),
+      child: MedsReminderApp(),
+    ),
+  );
 }
 
+// main stateless widget code
 class MedsReminderApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -21,212 +31,16 @@ class MedsReminderApp extends StatelessWidget {
   }
 }
 
+// stateful widget code
 class MedsReminderScreen extends StatefulWidget {
   @override
   _MedsReminderScreenState createState() => _MedsReminderScreenState();
 }
 
 class _MedsReminderScreenState extends State<MedsReminderScreen> {
-  List<Map<String, dynamic>> meds = [];
-
-  // Shows a Cupertino-style time picker as a modal popup and returns the selected TimeOfDay.
-  Future<TimeOfDay?> _showCupertinoTimePicker({
-    required BuildContext ctx,
-    TimeOfDay? initialTime,
-  }) async {
-    DateTime now = DateTime.now();
-    DateTime initialDateTime = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      initialTime?.hour ?? now.hour,
-      initialTime?.minute ?? now.minute,
-    );
-
-    DateTime chosen = initialDateTime;
-
-    final result = await showCupertinoModalPopup<DateTime>(
-      context: ctx,
-      builder: (_) {
-        return Container(
-          height: 260,
-          decoration: BoxDecoration(
-            color: CupertinoColors.systemBackground.resolveFrom(ctx),
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-          ),
-          child: SafeArea(
-            top: false,
-            child: Column(
-              children: [
-                // top action bar
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CupertinoButton(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 6,
-                        ),
-                        child: Text('Cancel'),
-                        onPressed: () => Navigator.of(ctx).pop(),
-                      ),
-                      CupertinoButton(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 6,
-                        ),
-                        child: Text(
-                          'Done',
-                          style: TextStyle(color: Colors.cyan),
-                        ),
-                        onPressed: () => Navigator.of(ctx).pop(chosen),
-                      ),
-                    ],
-                  ),
-                ),
-                // the picker
-                SizedBox(
-                  height: 180,
-                  child: CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.time,
-                    initialDateTime: initialDateTime,
-                    use24hFormat: false,
-                    onDateTimeChanged: (DateTime newDate) {
-                      chosen = newDate;
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-
-    if (result == null) return null;
-    return TimeOfDay(hour: result.hour, minute: result.minute);
-  }
-
-  Future<void> _addMedication() async {
-    final TextEditingController nameController = TextEditingController();
-    TimeOfDay? selectedTime;
-
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: Text(
-            "Add Medication",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          content: StatefulBuilder(
-            builder: (context, setStateSB) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: nameController,
-                    decoration: InputDecoration(
-                      labelText: "Medication Name",
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  SizedBox(height: 15),
-                  GestureDetector(
-                    onTap: () async {
-                      // Use the dedicated Cupertino modal popup (works reliably)
-                      final picked = await _showCupertinoTimePicker(
-                        ctx: context,
-                        initialTime: selectedTime,
-                      );
-                      if (picked != null) {
-                        setStateSB(() {
-                          selectedTime = picked;
-                        });
-                      }
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 12,
-                        horizontal: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade400),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            selectedTime == null
-                                ? "Select Time"
-                                : selectedTime!.format(context),
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          Icon(Icons.access_time, color: Colors.cyan),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text("Cancel"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (nameController.text.isNotEmpty && selectedTime != null) {
-                  setState(() {
-                    meds.add({
-                      'title': nameController.text,
-                      'time': selectedTime!.format(context),
-                      'taken': false,
-                    });
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        '${nameController.text} added for ${selectedTime!.format(context)}',
-                      ),
-                      behavior: SnackBarBehavior.floating,
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                  Navigator.of(context).pop();
-                } else {
-                  // quick feedback if missing fields
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Please enter name and pick a time.'),
-                      behavior: SnackBarBehavior.floating,
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                }
-              },
-              child: Text("Add"),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    meds.sort((a, b) => a['time'].compareTo(b['time']));
+    //globals.medsdata.meds.sort((a, b) => a['time'].compareTo(b['time']));
 
     return Scaffold(
       appBar: AppBar(
@@ -235,7 +49,7 @@ class _MedsReminderScreenState extends State<MedsReminderScreen> {
         centerTitle: true,
         elevation: 2,
       ),
-      body: meds.isEmpty
+      body: Provider.of<MedsListProvider>(context, listen: true).meds.isEmpty
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -253,11 +67,18 @@ class _MedsReminderScreenState extends State<MedsReminderScreen> {
                 ],
               ),
             )
+          // Iteration Builder ==========================================================================================
           : ListView.builder(
               padding: EdgeInsets.all(10),
-              itemCount: meds.length,
+              itemCount: Provider.of<MedsListProvider>(
+                context,
+                listen: false,
+              ).meds.length,
               itemBuilder: (context, index) {
-                final med = meds[index];
+                final med = Provider.of<MedsListProvider>(
+                  context,
+                  listen: false,
+                ).meds[index];
                 final bool taken = med['taken'] ?? false;
 
                 return Card(
@@ -282,7 +103,11 @@ class _MedsReminderScreenState extends State<MedsReminderScreen> {
                             ),
                             TextButton(
                               onPressed: () {
-                                setState(() => meds.removeAt(index));
+                                setState(
+                                  () => Provider.of<MedsListProvider>(
+                                    context,
+                                  ).meds.removeAt(index),
+                                );
                                 Navigator.pop(context);
                               },
                               child: Text(
@@ -299,7 +124,10 @@ class _MedsReminderScreenState extends State<MedsReminderScreen> {
                       value: taken,
                       onChanged: (value) {
                         setState(() {
-                          meds[index]['taken'] = value ?? false;
+                          Provider.of<MedsListProvider>(
+                            context,
+                            listen: false,
+                          ).meds[index]['taken'] = value ?? false;
                         });
                       },
                     ),
@@ -331,10 +159,12 @@ class _MedsReminderScreenState extends State<MedsReminderScreen> {
             ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.cyan,
-        onPressed: _addMedication,
+        onPressed: () => addMedication(context),
         child: Icon(Icons.add, color: Colors.white),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
+      // =============================================================================================
       bottomNavigationBar: BottomAppBar(
         shape: CircularNotchedRectangle(),
         notchMargin: 6,
