@@ -44,7 +44,14 @@ class _MedsReminderScreenState extends State<MedsReminderScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("MediTrack"),
+        title: Text(
+              "MediTrack",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 30, // Changed from 24 to 30
+              ),
+            ),
         backgroundColor: Colors.cyan,
         centerTitle: true,
         elevation: 2,
