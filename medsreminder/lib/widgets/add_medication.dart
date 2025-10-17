@@ -4,12 +4,12 @@ import 'package:provider/provider.dart';
 import 'time_picker.dart';
 //import './localdata/global_data.dart' as globals;
 
-Future<void> addMedication(BuildContext context) async {
+Future<void> addMedication(BuildContext outerContext) async {
   final TextEditingController nameController = TextEditingController();
   TimeOfDay? selectedTime;
 
   await showDialog(
-    context: context,
+    context: outerContext,
     builder: (context) {
       return AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -30,6 +30,9 @@ Future<void> addMedication(BuildContext context) async {
                   ),
                 ),
                 SizedBox(height: 15),
+                //
+                // ================================================================== Time Picker
+                //
                 GestureDetector(
                   onTap: () async {
                     // Use the dedicated Cupertino modal popup (works reliably)
@@ -80,7 +83,7 @@ Future<void> addMedication(BuildContext context) async {
                   listen: false,
                 ).addMeds(nameController.text, selectedTime!.format(context));
 
-                ScaffoldMessenger.of(context).showSnackBar(
+                ScaffoldMessenger.of(outerContext).showSnackBar(
                   SnackBar(
                     content: Text(
                       '${nameController.text} added for ${selectedTime!.format(context)}',
@@ -92,11 +95,12 @@ Future<void> addMedication(BuildContext context) async {
                 Navigator.of(context).pop();
               } else {
                 // quick feedback if missing fields
-                ScaffoldMessenger.of(context).showSnackBar(
+                ScaffoldMessenger.of(outerContext).showSnackBar(
                   SnackBar(
                     content: Text('Please enter name and pick a time.'),
                     behavior: SnackBarBehavior.floating,
                     duration: Duration(seconds: 2),
+                    elevation: 10,
                   ),
                 );
               }

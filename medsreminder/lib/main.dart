@@ -50,7 +50,9 @@ class _MedsReminderScreenState extends State<MedsReminderScreen> {
         elevation: 2,
       ),
       body: Provider.of<MedsListProvider>(context, listen: true).meds.isEmpty
-          ? Center(
+          ?
+            // show the center widget that indicates there's no alarm to display.
+            Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -68,8 +70,10 @@ class _MedsReminderScreenState extends State<MedsReminderScreen> {
               ),
             )
           // Iteration Builder ==========================================================================================
+          // checks the contents of Provider.of<MedsListProvider>(context, listen: boolean)
           : ListView.builder(
               padding: EdgeInsets.all(10),
+              // =============
               itemCount: Provider.of<MedsListProvider>(
                 context,
                 listen: false,
@@ -155,6 +159,7 @@ class _MedsReminderScreenState extends State<MedsReminderScreen> {
                     ),
                   ),
                 );
+                // =============
               },
             ),
       floatingActionButton: FloatingActionButton(
