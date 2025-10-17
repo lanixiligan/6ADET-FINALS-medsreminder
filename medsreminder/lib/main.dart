@@ -4,9 +4,13 @@ import 'widgets/time_picker.dart';
 import 'widgets/add_medication.dart';
 //import './localdata/global_data.dart' as globals;
 import 'package:provider/provider.dart';
+// import 'service/alarm_service.dart';
 
 // main app booter
-void main() {
+void main() /*async*/ {
+  //WidgetsFlutterBinding.ensureInitialized();
+  //await AlarmService.init();
+  
   runApp(
     ChangeNotifierProvider(
       create: (_) => MedsListProvider(),
