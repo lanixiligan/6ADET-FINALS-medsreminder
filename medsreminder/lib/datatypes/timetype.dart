@@ -11,5 +11,7 @@ class Reminder {
     required String this.label,
     required String this.timeType,
     required DateTime this.time,
-  }) {}
+  }) {
+    this.lastTaken = DateTime.now();
+  }
 }
