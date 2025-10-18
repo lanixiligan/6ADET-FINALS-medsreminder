@@ -1,11 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:medsreminder/datatypes/providertype.dart';
-import 'widgets/time_picker.dart';
 import 'widgets/add_medication.dart';
 import 'package:provider/provider.dart';
+import 'package:alarm/alarm.dart';
+import 'widgets/generate_card.dart';
+
+import 'dart:async';
+
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 
 // main app booter
-void main() {
+Future<void> main() async {
+  // alarm widgets init
+  WidgetsFlutterBinding.ensureInitialized();
+  await Alarm.init();
+  // sqlite init
+  WidgetsFlutterBinding.ensureInitialized();
+  final database = openDatabase(
+    // Set the path to the database. Note: Using the `join` function from the
+    // `path` package is best practice to ensure the path is correctly
+    // constructed for each platform.
+    join(await getDatabasesPath(), 'medsalarm.db'),
+    onCreate: (db, version) {
+      return db.execute('CREATE TABLE medsreminders()');
+    },
+  );
+
   runApp(
     ChangeNotifierProvider(
       create: (_) => MedsListProvider(),
@@ -80,92 +101,9 @@ class _MedsReminderScreenState extends State<MedsReminderScreen> {
           : ListView.builder(
               padding: EdgeInsets.all(10),
               // =============
-              itemCount: Provider.of<MedsListProvider>(
-                context,
-                listen: false,
-              ).meds.length,
+              itemCount: Provider.of<MedsListProvider>(context).meds.length,
               itemBuilder: (context, index) {
-                final med = Provider.of<MedsListProvider>(
-                  context,
-                  listen: false,
-                ).meds[index];
-                final bool taken = med['taken'] ?? false;
-
-                return Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  elevation: 3,
-                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
-                  child: ListTile(
-                    onLongPress: () {
-                      showDialog(
-                        context: context,
-                        builder: (_) => AlertDialog(
-                          title: Text("Delete ${med['title']}?"),
-                          content: Text(
-                            "Are you sure you want to remove this?",
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text("Cancel"),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                setState(
-                                  () => Provider.of<MedsListProvider>(
-                                    context,
-                                  ).meds.removeAt(index),
-                                );
-                                Navigator.pop(context);
-                              },
-                              child: Text(
-                                "Delete",
-                                style: TextStyle(color: Colors.red),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                    leading: Checkbox(
-                      activeColor: Colors.cyan,
-                      value: taken,
-                      onChanged: (value) {
-                        setState(() {
-                          Provider.of<MedsListProvider>(
-                            context,
-                            listen: false,
-                          ).meds[index]['taken'] = value ?? false;
-                        });
-                      },
-                    ),
-                    title: Text(
-                      med['title'],
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        decoration: taken
-                            ? TextDecoration.lineThrough
-                            : TextDecoration.none,
-                      ),
-                    ),
-                    subtitle: Text(
-                      med['time'] ?? '',
-                      style: TextStyle(
-                        color: Colors.grey.shade700,
-                        decoration: taken
-                            ? TextDecoration.lineThrough
-                            : TextDecoration.none,
-                      ),
-                    ),
-                    trailing: Icon(
-                      Icons.medical_information,
-                      color: taken ? Colors.grey : Colors.cyan,
-                    ),
-                  ),
-                );
-                // =============
+                return generateCard(outerContext: context, index: index);
               },
             ),
       floatingActionButton: FloatingActionButton(
