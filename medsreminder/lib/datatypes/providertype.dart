@@ -1,18 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'dart:math';
 
-import 'package:medsreminder/datatypes/timetype.dart';
-
 // To properly access the list of meds
 // Use: Provider.of<MedsListProvider>(context, listen:false).meds
 Random random = Random();
 
 class MedsListProvider extends ChangeNotifier {
-  List<Map<String, Reminder>> _meds = [];
+  List<Map<String, dynamic>> _meds = [];
 
-  List<Map<String, Reminder>> get meds => _meds;
+  List<Map<String, dynamic>> get meds => _meds;
 
-  set setMeds(List<Map<String, Reminder>> newval) {
+  set setMeds(List<Map<String, dynamic>> newval) {
     _meds = newval;
     notifyListeners();
   }
@@ -26,6 +24,7 @@ class MedsListProvider extends ChangeNotifier {
       'uuid': random.nextInt(1000000),
       'title': name,
       'time': selectedTime,
+      'type': reminderType,
       'taken': false,
     };
 

@@ -44,18 +44,20 @@ Widget generateCard({required BuildContext outerContext, required int index}) {
               ),
             );
           },
-          leading: Checkbox(
-            activeColor: Colors.cyan,
-            value: taken,
-            onChanged: (value) {
-              setStateSB(() {
-                Provider.of<MedsListProvider>(
-                  context,
-                  listen: false,
-                ).meds[index]['taken'] = value ?? false;
-              });
-            },
-          ),
+          leading: med['type'] == "Once A Day"
+              ? Checkbox(
+                  activeColor: Colors.cyan,
+                  value: taken,
+                  onChanged: (value) {
+                    setStateSB(() {
+                      Provider.of<MedsListProvider>(
+                        context,
+                        listen: false,
+                      ).meds[index]['taken'] = value ?? false;
+                    });
+                  },
+                )
+              : null,
           title: Text(
             med['title'],
             style: TextStyle(
@@ -65,21 +67,21 @@ Widget generateCard({required BuildContext outerContext, required int index}) {
                   : TextDecoration.none,
             ),
           ),
-          subtitle: Text(
-            med['time'] ?? '',
-            style: TextStyle(
-              color: Colors.grey.shade700,
-              decoration: taken
-                  ? TextDecoration.lineThrough
-                  : TextDecoration.none,
-            ),
-          ),
+          subtitle: med['type'] == "Once A Day"
+              ? null
+              : Text(
+                  med['time'] ?? '',
+                  style: TextStyle(
+                    color: Colors.grey.shade700,
+                    decoration: taken
+                        ? TextDecoration.lineThrough
+                        : TextDecoration.none,
+                  ),
+                ),
           trailing: Switch(
-            // This bool value toggles the switch.
             value: light,
             activeThumbColor: Colors.lightBlueAccent,
             onChanged: (bool value) {
-              // This is called when the user toggles the switch.
               setStateSB(() {
                 light = value;
               });

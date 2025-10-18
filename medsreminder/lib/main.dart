@@ -11,22 +11,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 // main app booter
-Future<void> main() async {
-  // alarm widgets init
-  WidgetsFlutterBinding.ensureInitialized();
-  await Alarm.init();
-  // sqlite init
-  WidgetsFlutterBinding.ensureInitialized();
-  final database = openDatabase(
-    // Set the path to the database. Note: Using the `join` function from the
-    // `path` package is best practice to ensure the path is correctly
-    // constructed for each platform.
-    join(await getDatabasesPath(), 'medsalarm.db'),
-    onCreate: (db, version) {
-      return db.execute('CREATE TABLE medsreminders()');
-    },
-  );
-
+void main() {
   runApp(
     ChangeNotifierProvider(
       create: (_) => MedsListProvider(),
@@ -65,13 +50,13 @@ class _MedsReminderScreenState extends State<MedsReminderScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-              "MediTrack",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 30, // Changed from 24 to 30
-              ),
-            ),
+          "MediTrack",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 30, // Changed from 24 to 30
+          ),
+        ),
         backgroundColor: Colors.cyan,
         centerTitle: true,
         elevation: 2,
