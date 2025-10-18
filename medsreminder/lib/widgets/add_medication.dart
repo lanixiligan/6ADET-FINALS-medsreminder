@@ -138,7 +138,7 @@ Future<void> addMedication(BuildContext outerContext) async {
                   name: nameController.text,
                   selectedTime: selectedTime != null
                       ? selectedTime!.format(context)
-                      : TimeOfDay(hour: 8, minute: 0).format(context),
+                      : TimeOfDay(hour: 0, minute: 0).format(context),
                   reminderType: selectedChoice,
                 );
 
