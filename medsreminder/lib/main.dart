@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:medsreminder/datatypes/providertype.dart';
 import 'widgets/time_picker.dart';
 import 'widgets/add_medication.dart';
-//import './localdata/global_data.dart' as globals;
 import 'package:provider/provider.dart';
 
 // main app booter
