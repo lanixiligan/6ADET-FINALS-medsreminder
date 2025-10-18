@@ -44,18 +44,20 @@ Widget generateCard({required BuildContext outerContext, required int index}) {
               ),
             );
           },
-          leading: Checkbox(
-            activeColor: Colors.cyan,
-            value: taken,
-            onChanged: (value) {
-              setStateSB(() {
-                Provider.of<MedsListProvider>(
-                  context,
-                  listen: false,
-                ).meds[index]['taken'] = value ?? false;
-              });
-            },
-          ),
+          leading: med['type'] == "Once A Day"
+              ? Checkbox(
+                  activeColor: Colors.cyan,
+                  value: taken,
+                  onChanged: (value) {
+                    setStateSB(() {
+                      Provider.of<MedsListProvider>(
+                        context,
+                        listen: false,
+                      ).meds[index]['taken'] = value ?? false;
+                    });
+                  },
+                )
+              : null,
           title: Text(
             med['title'],
             style: TextStyle(
